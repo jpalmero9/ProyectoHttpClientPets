@@ -17,37 +17,44 @@ namespace HttpClientPetStore
             Console.WriteLine("Indique el nombre de su mascota:");
             nombrePet = Console.ReadLine();
 
-            laPeticion = "{\"id\": \"" + elId + "\", \"name\": \"" + nombrePet + "\" }";
-            
-            using (HttpClient client = new HttpClient())
+            if (!string.IsNullOrEmpty(nombrePet))
             {
-                try
+                laPeticion = "{\"id\": \"" + elId + "\", \"name\": \"" + nombrePet + "\" }";
+
+                using (HttpClient client = new HttpClient())
                 {
-                    var content = new StringContent(laPeticion, System.Text.Encoding.UTF8, "application/json");
-
-                    HttpResponseMessage response = await client.PostAsync(urlDestino, content);
-
-                    if (response.IsSuccessStatusCode)
-                    {                       
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        
-                        Console.WriteLine();
-                        Console.WriteLine("Resultado de su transacción:");
-                        Console.WriteLine("----------------------------");                        
-                        Console.WriteLine(JsonConvert.DeserializeObject(responseBody));
-                        Console.WriteLine("----------------------------");
-                        Console.WriteLine("Presione enter para finalizar");
-                        Console.ReadKey();
-                    }
-                    else
+                    try
                     {
-                        Console.WriteLine("Error en la petición: " + response.StatusCode);
+                        var content = new StringContent(laPeticion, System.Text.Encoding.UTF8, "application/json");
+
+                        HttpResponseMessage response = await client.PostAsync(urlDestino, content);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+
+                            Console.WriteLine();
+                            Console.WriteLine("Resultado de su transacción:");
+                            Console.WriteLine("----------------------------");
+                            Console.WriteLine(JsonConvert.DeserializeObject(responseBody));
+                            Console.WriteLine("----------------------------");
+                            Console.WriteLine("Presione enter para finalizar");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error en la petición: " + response.StatusCode);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error: " + ex.Message);
-                }
+            }
+            else
+            {
+                Console.WriteLine("Debe escribir el nombre de la mascota");
             }
         }
     }
